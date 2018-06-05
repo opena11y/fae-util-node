@@ -1,0 +1,103 @@
+50 total URL(s) processsed. All URL(s) processsed:
+	0: http://www.uis.edu
+	1: https://www.uis.edu/azindex/
+	2: https://www.uis.edu/about/contact/
+	3: https://uisapp-s.uis.edu/directory/
+	4: https://www.uis.edu/about/visit/maps/
+	5: https://www.uis.edu/about/facts/
+	6: https://www.uis.edu/campussenate/
+	7: https://www.uis.edu/chancellor/
+	8: https://www.uis.edu/about/diversity/
+	9: https://www.uis.edu/about/explore/students/engagement/
+	10: https://www.uis.edu/about/history-traditions/
+	11: https://www.uis.edu/humanresources/
+	12: https://www.uis.edu/strategicplan/plan/sectionone/mission/
+	13: https://www.uis.edu/newsroom/
+	14: https://www.uis.edu/parking/
+	15: https://www.uis.edu/insideuis/at-a-glance/pride/
+	16: https://www.uis.edu/about/safety/
+	17: https://www.uis.edu/sightsandsounds/
+	18: https://www.uis.edu/about/visit/springfield/
+	19: https://www.uis.edu/academicaffairs/strategic-compass/
+	20: https://www.uis.edu/sustainability/
+	21: https://www.uis.edu/about/explore/arts/
+	22: https://www.uis.edu/about/explore/veterans/
+	23: https://www.uis.edu/about/visit/
+	24: https://www.uis.edu/academicaffairs/
+	25: https://www.uis.edu/academicintegrity/
+	26: https://www.uis.edu/academics/
+	27: https://www.uis.edu/registration/calendars/
+	28: https://www.uis.edu/accreditation/
+	29: https://www.uis.edu/uiscatalog/
+	30: https://www.uis.edu/academics/colleges/
+	31: https://www.uis.edu/registration/courseSchedule/
+	32: https://www.uis.edu/academicaffairs/curriculum/
+	33: https://www.uis.edu/academicaffairs/effectiveness/
+	34: https://www.uis.edu/insideuis/at-a-glance/majorsandminors/
+	35: https://www.uis.edu/faculty/
+	36: https://www.uis.edu/online/
+	37: https://www.uis.edu/registration/
+	38: https://www.uis.edu/about/explore/research/
+	39: https://www.uis.edu/informationtechnologyservices/
+	40: https://www.uis.edu/insideuis/at-a-glance/chooseuis/
+	41: https://www.uis.edu/admissions/
+	42: https://www.uis.edu/admissions/applyToday/
+	43: https://apply.uis.edu/account/login?r=https%3a%2f%2fapply.uis.edu%2fapply%2fstatus
+	44: https://www.uis.edu/choose-a-degree/
+	45: https://www.uis.edu/financialaid/studentconsumerinformation/
+	46: https://www.uis.edu/financialaid/cost/
+	47: https://www.uis.edu/financialaid/
+	48: https://www.uis.edu/residencelife/
+	49: https://www.uis.edu/graduateinternprograms/
+
+Tree representation of URL(s) processsed:
+http://www.uis.edu
+	https://www.uis.edu/azindex/
+	https://www.uis.edu/about/contact/
+	https://uisapp-s.uis.edu/directory/
+	https://www.uis.edu/about/visit/maps/
+	https://www.uis.edu/about/facts/
+	https://www.uis.edu/campussenate/
+	https://www.uis.edu/chancellor/
+	https://www.uis.edu/about/diversity/
+	https://www.uis.edu/about/explore/students/engagement/
+	https://www.uis.edu/about/history-traditions/
+	https://www.uis.edu/humanresources/
+	https://www.uis.edu/strategicplan/plan/sectionone/mission/
+	https://www.uis.edu/newsroom/
+	https://www.uis.edu/parking/
+	https://www.uis.edu/insideuis/at-a-glance/pride/
+	https://www.uis.edu/about/safety/
+	https://www.uis.edu/sightsandsounds/
+	https://www.uis.edu/about/visit/springfield/
+	https://www.uis.edu/academicaffairs/strategic-compass/
+	https://www.uis.edu/sustainability/
+	https://www.uis.edu/about/explore/arts/
+	https://www.uis.edu/about/explore/veterans/
+	https://www.uis.edu/about/visit/
+	https://www.uis.edu/academicaffairs/
+	https://www.uis.edu/academicintegrity/
+	https://www.uis.edu/academics/
+	https://www.uis.edu/registration/calendars/
+	https://www.uis.edu/accreditation/
+	https://www.uis.edu/uiscatalog/
+	https://www.uis.edu/academics/colleges/
+	https://www.uis.edu/registration/courseSchedule/
+	https://www.uis.edu/academicaffairs/curriculum/
+	https://www.uis.edu/academicaffairs/effectiveness/
+	https://www.uis.edu/insideuis/at-a-glance/majorsandminors/
+	https://www.uis.edu/faculty/
+	https://www.uis.edu/online/
+	https://www.uis.edu/registration/
+	https://www.uis.edu/about/explore/research/
+	https://www.uis.edu/informationtechnologyservices/
+	https://www.uis.edu/insideuis/at-a-glance/chooseuis/
+	https://www.uis.edu/admissions/
+	https://www.uis.edu/admissions/applyToday/
+	https://apply.uis.edu/account/login?r=https%3a%2f%2fapply.uis.edu%2fapply%2fstatus
+	https://www.uis.edu/choose-a-degree/
+	https://www.uis.edu/financialaid/studentconsumerinformation/
+	https://www.uis.edu/financialaid/cost/
+	https://www.uis.edu/financialaid/
+	https://www.uis.edu/residencelife/
+	https://www.uis.edu/graduateinternprograms/

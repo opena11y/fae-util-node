@@ -1,0 +1,10 @@
+These URL(s) either took too long to process, had an exception thrown during running of the scripts, or returned 403/404 status code:
+https://www.uis.edu/academics/
+https://www.uis.edu/academics/colleges/
+https://www.uis.edu/insideuis/at-a-glance/majorsandminors/
+https://www.uis.edu/insideuis/at-a-glance/chooseuis/
+https://www.uis.edu/admissions/
+https://www.uis.edu/admissions/applyToday/
+https://www.uis.edu/choose-a-degree/
+https://www.uis.edu/financialaid/cost/
+https://www.uis.edu/residencelife/
