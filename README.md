@@ -116,7 +116,7 @@ var ruleset = OpenAjax.a11y.all_rulesets.getRuleset("<ruleset>");
   
 var evaluation = ruleset.evaluate(doc.location.href, doc.title, doc, null, true);
 
-var out = evaluation.<oaaExportFunction>(<exportOption>);
+var out = evaluation.toJSON();
 
 out;
 ```
