@@ -1,0 +1,17 @@
+{
+    "urls": ["http://mihirkumar.com/"],
+    "outputDirectory": ".",
+    "path": "",
+    "authorization": "",
+    "spanDomains": "",
+    "includeDomains": "",
+    "excludeDomains": "",
+    "depth": "",
+    "wait": "",
+    "ruleset": "",
+    "exportOption": "",
+    "version": "",
+    "maxPages": 1,
+    "delay": "",
+    "debug": ""
+}
