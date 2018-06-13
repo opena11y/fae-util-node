@@ -29,7 +29,7 @@ Utility used by FAE technologies to spider and analyze web pages using OpenAjax 
 ```
 -o, --outputDirectory <arg>  Required: directory for results files
 
--p, --path                 Optional: path the URL must include to be included in the evaluation
+-p, --path                   Optional: path the URL must include to be included in the evaluation
 
 
 -c, --config <arg>           Optional: filename of configuration parameters
@@ -43,14 +43,11 @@ Utility used by FAE technologies to spider and analyze web pages using OpenAjax 
 -w, --wait <arg>             Optional: maximium time in milliseconds to wait when processing a page, default = 30000 msec. (30 seconds)
 
 -r, --ruleset <arg>          Optional: OAA ruleset ID ('ARIA_TRANS' | 'ARIA_STRICT', default = 'ARIA_TRANS')
--xo, --exportOption <arg>    Optional: True | False, default = False 
 
 -v, --version                Optional: output the fae-util version number
 -h, --help                   Optional: output help for command-line syntax and options
 
 -m, -maxPages <arg>          Optional: maximum number of pages to process, default is no limit
-
--j, --javaScript             Optional: HtmlUnit javascript option (true | false, default = true, which enables javascript)  
 ```
 
 ### Properties File Format 
