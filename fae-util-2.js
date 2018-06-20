@@ -5,9 +5,9 @@ const fs = require('fs');
 
 const configOptions = require('./config.json');
 
-function evaluateRules() {
+function evaluateRules(passedRuleset) {
   var doc = window.document;
-  var ruleset = OpenAjax.a11y.RulesetManager.getRuleset("ARIA_STRICT");
+  var ruleset = OpenAjax.a11y.RulesetManager.getRuleset(passedRuleset);
   var evaluator_factory = OpenAjax.a11y.EvaluatorFactory.newInstance();
   evaluator_factory.setParameter('ruleset', ruleset);
   evaluator_factory.setFeature('eventProcessing', 'fae-util');
@@ -25,8 +25,16 @@ function evaluateRules() {
 
   for (numPagesEvaluated = 0; numPagesEvaluated < configOptions.urls.length && numPagesEvaluated < configOptions.maxPages; numPagesEvaluated++){
 
+    const millisecondsToSeconds = 1000;
+
     var page = await browser.newPage();
-    await page.goto(configOptions.urls[numPagesEvaluated], {waitUntil: 'load'});
+    await page.goto(configOptions.urls[numPagesEvaluated], {timeout: configOptions.wait*millisecondsToSeconds, waitUntil: 'load'});
+    await page.waitFor(configOptions.delay*millisecondsToSeconds);
+
+    if (configOptions.authentication){
+      const credentialsObject = {username: configOptions.username, password: configOptions.password};
+      await page.authenticate(credentialsObject);
+    }
   
     const evaluationFileOptions = {path: './oaa_a11y_evaluation.js'};
     const ruleFileOptions = {path: './oaa_a11y_rules.js'};
@@ -40,7 +48,7 @@ function evaluateRules() {
     await page.addScriptTag(ruleFileOptionsObject);
     await page.addScriptTag(rulesetsFileOptionsObject);
   
-    var results = await page.evaluate(evaluateRules);
+    var results = await page.evaluate(evaluateRules, configOptions.ruleset);
   
     var result_index = 0;
   
