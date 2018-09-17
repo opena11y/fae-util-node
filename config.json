@@ -1,6 +1,6 @@
 {
-    "urls": ["http://mihirkumar.com/", "http://illinois.edu"],
-    "maxPages": 2,
+    "urls": ["http://mihirkumar.com"],
+    "maxPages": 10,
     "wait": 0,
     "delay": 0,
     "ruleset": "ARIA_STRICT",
