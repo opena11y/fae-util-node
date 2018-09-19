@@ -19,8 +19,8 @@ function evaluateRules(passedRuleset) {
 }
 
 (async() => {
-  const browser = await puppeteer.launch({
-    args: ['--disable-web-security']
+  var browser = await puppeteer.launch({
+    args: ['--disable-web-security', '--no-sandbox', '--disable-setuid-sandbox']
   });
 
   var numPagesEvaluated;
