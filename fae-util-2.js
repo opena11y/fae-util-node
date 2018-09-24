@@ -19,17 +19,32 @@ function evaluateRules(passedRuleset) {
   return out;
 }
 
+async function validateLink (url) {
+  var flag = false;
+
+  if (validUrl.isUri(url)){
+
+    flag = true;
+
+    for (var x = 0; x < configOptions.excluded_extensions.length && flag; x++){
+      if (url.substr(url.length - 4) == '.' + configOptions.excluded_extensions[x]
+          || url.substr(0, 7) == 'mailto:')
+        flag = false;
+    }
+  }
+
+  return flag;
+}
+
 async function crawl(urlRoot, numUrlsEvaluated) {
   console.log('Entered crawl()');
   var numPagesEvaluated = 0, currentDepth = 0, index = 0;
   var currentQueue = [urlRoot];
   var traversed = Array();
-  var notTraversed = Array();
+  var excluded = Array();
   var tempUrl;
-  var pageWasEvaluated;
 
   while (numPagesEvaluated <= configOptions.maxPages && currentQueue.length) {
-    pageWasEvaluated = false;
 
     console.log('Current Queue: ' + currentQueue);
 
@@ -38,20 +53,16 @@ async function crawl(urlRoot, numUrlsEvaluated) {
     if (!(tempUrl in traversed)){
       console.log('Current URL:', tempUrl, 'Current Depth:', currentDepth, 'Index:', index);
 
-      if (validUrl.isUri(tempUrl)){
+      if (await validateLink(tempUrl)){
         console.log(tempUrl + ' is a valid URL');
+        traversed.push(tempUrl);
       } else {
         console.log(tempUrl + ' is a NOT a valid URL');
+        excluded.push(tempUrl);
+        continue;
       }
   
-      pageWasEvaluated = await evaluateSinglePage(tempUrl, currentQueue, currentDepth, index, numUrlsEvaluated);
-  
-      if (pageWasEvaluated) {
-        traversed.push(tempUrl);
-      }
-      else {
-        notTraversed.push(tempUrl);
-      }
+      await evaluateSinglePage(tempUrl, currentQueue, currentDepth, index, numUrlsEvaluated);
 
       index++;
       numPagesEvaluated++;
@@ -59,13 +70,12 @@ async function crawl(urlRoot, numUrlsEvaluated) {
     else {
       console.log(tempUrl, 'has already been traversed.');
     }
-
-    console.log('Traversed:', traversed);
-    console.log('Not traversed:', notTraversed);
   }
 
-  console.log('Traversed:', traversed);
-  console.log('Not traversed:', notTraversed);
+  console.log('Loop end: Traversed:', traversed);
+  console.log('Loop end: Excluded:', excluded);
+
+  return;
 }
 
 async function evaluateSinglePage(url, currentQueue, currentDepth, index, numUrlsEvaluated) {
@@ -80,35 +90,34 @@ async function evaluateSinglePage(url, currentQueue, currentDepth, index, numUrl
 
     const millisecondsToSeconds = 1000;
     // load page with/without delay and wait
-    console.log('line 51');
     await page.goto(url, { timeout: configOptions.wait * millisecondsToSeconds, waitUntil: 'networkidle0' }); //wait
-    console.log('line 54');
+    console.log(url, ' successfully navigated to.');
     await page.waitFor(configOptions.delay * millisecondsToSeconds); //delay
-    console.log('line 56');
+
     // HTTP authentication
     if (configOptions.authentication) {
       const credentialsObject = { username: configOptions.username, password: configOptions.password };
       await page.authenticate(credentialsObject);
     }
-    console.log('line 62');
+    console.log('HTTP auth passed.');
+
     // Import evaluation library into the page
     const evaluationFileOptions = { path: './oaa_a11y_evaluation.js' };
     const ruleFileOptions = { path: './oaa_a11y_rules.js' };
     const rulesetsFileOptions = { path: './oaa_a11y_rulesets.js' };
-    console.log('line 65');
+
     const evaluationFileOptionsObject = Object.create(evaluationFileOptions);
     const ruleFileOptionsObject = Object.create(ruleFileOptions);
     const rulesetsFileOptionsObject = Object.create(rulesetsFileOptions);
-    console.log('line 69');
+
     await page.addScriptTag(evaluationFileOptionsObject);
     await page.addScriptTag(ruleFileOptionsObject);
     await page.addScriptTag(rulesetsFileOptionsObject);
-    console.log('line 75');
+    console.log('Evaluation libs injected.');
     //Run evaluation
-    console.log('got to line 77:');
-    var results = await page.evaluate(evaluateRules, configOptions.ruleset);
-    console.log('got to line 79:');
 
+    var results = await page.evaluate(evaluateRules, configOptions.ruleset);
+    console.log('Evaluations completed successfully.');
     //Export results to file
 
     fs.writeFile(configOptions.outputDirectory + "/results_" + numUrlsEvaluated.toString() + '_' + index.toString() + ".json", results, function (err) {
@@ -118,23 +127,20 @@ async function evaluateSinglePage(url, currentQueue, currentDepth, index, numUrl
 
       console.log("results_" + numUrlsEvaluated.toString() + '_' + index.toString() + ".json was saved!");
     });
-    console.log('line 93');
+
     if (currentDepth <= configOptions.depth) {
       // get all links and push at the end of currentQueue
       const links = await page.evaluate(() => {
         const anchors = document.querySelectorAll('a');
         return [].map.call(anchors, a => a.href);
       });
-      
-      console.log('97');
 
       for (var i = 0, max = links.length; i < max; i++) {
         currentQueue.push(links[i]);
       }
-      
-      currentDepth++;
+      currentDepth++; 
     }
-    console.log('line 102');
+
     //Close headless Chrome tab / page
     await page.close();
     await browser.close();

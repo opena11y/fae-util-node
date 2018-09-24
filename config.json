@@ -15,7 +15,9 @@
     "spanDomains": "",
     "includeDomains": "",
     "excludeDomains": "",
-    "depth": "",
+    "depth": 0,
     "exportOption": "",
-    "debug": ""
+    "debug": "",
+    "excluded_extensions": ["doc", "docx", "gif", "jpeg", "jpg", "mov", "pdf", "ppt", "xml"],
+    "excluded_prefixes": ["mailto:"]
 }

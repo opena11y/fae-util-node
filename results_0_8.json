@@ -1,6 +1,6 @@
 {
-  "eval_url"                  : "https://www.linkedin.com/start/join?session_redirect=https%3A%2F%2Fwww%2Elinkedin%2Ecom%2Fin%2Fmihirkumar12&trk=public_auth-wall_profile-join-link",
-  "eval_url_encoded"          : "https://www.linkedin.com/start/join?session_redirect=https%253A%252F%252Fwww%252Elinkedin%252Ecom%252Fin%252Fmihirkumar12&trk=public_auth-wall_profile-join-link",
+  "eval_url"                  : "https://www.linkedin.com/start/join?session_redirect=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fmihirkumar12&source=public_auth-wall_profile&trk=login_reg_redirect",
+  "eval_url_encoded"          : "https://www.linkedin.com/start/join?session_redirect=https%253A%252F%252Fwww.linkedin.com%252Fin%252Fmihirkumar12&source=public_auth-wall_profile&trk=login_reg_redirect",
   "eval_title"                : "Sign Up | LinkedIn",
   "ruleset_id"                : "ARIA_STRICT",
   "ruleset_title"             : "HTML5 and ARIA Techniques",
