@@ -4,7 +4,7 @@
     "wait": 0,
     "delay": 0,
     "ruleset": "ARIA_STRICT",
-    "outputDirectory": ".",
+    "outputDirectory": "./test",
     "version": "0.1",
     "authorization": false,
     "credentials": {
@@ -15,7 +15,7 @@
     "spanDomains": "",
     "includeDomains": "",
     "excludeDomains": "",
-    "depth": 0,
+    "depth": 2,
     "exportOption": "",
     "debug": "",
     "excluded_extensions": ["doc", "docx", "gif", "jpeg", "jpg", "mov", "pdf", "ppt", "xml"],
