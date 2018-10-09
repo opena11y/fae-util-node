@@ -3,6 +3,7 @@
 const puppeteer = require('puppeteer');
 const validUrl = require('valid-url');
 const fs = require('fs');
+// const url_parser = require('url-parse');
 const configOptions = require('./config.json');
 
 class Url {
@@ -38,7 +39,6 @@ function directoryIsEmpty(directory) {
       }
     }
   });
-  console.log('flag', flag);
   return flag;
 }
 
@@ -72,7 +72,7 @@ async function validateLink (url) {
                 console.log('Line 68');
               });
 
-              fs.appendFile(configOptions.outputDirectory + '/excluded_urls.txt', [URL, '\n'], function (err) {
+              fs.appendFile(configOptions.outputDirectory + '/excluded_urls.txt', [URL + '\n'], function (err) {
                 if (err) throw err;
                 console.log('Line 68');
               });
@@ -108,14 +108,35 @@ async function crawl(urlRoot, numUrlsEvaluated) {
         excluded.push(tempUrl.url);
         continue;
       }
-      
+
       evaluationStatus = await evaluateSinglePage(tempUrl, currentQueue, index, numUrlsEvaluated);
 
       if (evaluationStatus) {
         traversed.push(tempUrl.url);
+
+        fs.appendFile(configOptions.outputDirectory + '/processed_urls.csv', [tempUrl.url, tempUrl.parentUrl, '\n'], function (err) {
+          if (err) throw err;
+          console.log('Line 118');
+        });
+
+        fs.appendFile(configOptions.outputDirectory + '/processed_urls.txt', [tempUrl.url + '\n'], function (err) {
+          if (err) throw err;
+          console.log('Line 123');
+        });
       }
       else {
         excluded.push(tempUrl.url);
+
+        fs.appendFile(configOptions.outputDirectory + '/unprocessed_urls.csv', [tempUrl.url, tempUrl.parentUrl, '\n'], function (err) {
+          if (err) throw err;
+          console.log('Line 118');
+        });
+
+        fs.appendFile(configOptions.outputDirectory + '/unprocessed_urls.txt', [tempUrl.url + '\n'], function (err) {
+          if (err) throw err;
+          console.log('Line 123');
+        });
+
         continue;
       }
 
@@ -166,7 +187,7 @@ async function evaluateSinglePage(url, currentQueue, index, numUrlsEvaluated) {
     await page.addScriptTag(evaluationFileOptionsObject);
     await page.addScriptTag(ruleFileOptionsObject);
     await page.addScriptTag(rulesetsFileOptionsObject);
-    
+
     //Run evaluation
     var results = await page.evaluate(evaluateRules, configOptions.ruleset);
 
@@ -209,23 +230,21 @@ async function evaluateSinglePage(url, currentQueue, index, numUrlsEvaluated) {
 }
 
 (async () => {
-  
-  if (directoryIsEmpty(configOptions.outputDirectory)){
-    console.log('Specified directory not empty. Exiting.');
-    process.exit();
-  }
 
-  else {
-    try {
-      fs.statSync(configOptions.outputDirectory);
-    } catch(e) {
-      fs.mkdirSync(configOptions.outputDirectory);
+  if (fs.existsSync(configOptions.outputDirectory)){
+    console.log('Directory exists.');
+    if (!directoryIsEmpty(configOptions.outputDirectory)){
+      console.log('Specified directory not empty. Exiting.');
+      process.exit();
     }
+  }
+  else {
+    fs.mkdirSync(configOptions.outputDirectory);
   }
 
   var numUrlsEvaluated;
   //number of URLs from configOptions.urls that have been worked on
-    
+
   for (numUrlsEvaluated = 0; numUrlsEvaluated < configOptions.urls.length; numUrlsEvaluated++) {
     console.log("Run " + numUrlsEvaluated + ":");
     await crawl(configOptions.urls[numUrlsEvaluated], numUrlsEvaluated);
