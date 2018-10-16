@@ -12,9 +12,9 @@
         "password": ""
     },
     "path": "",
-    "spanDomains": "",
-    "includeDomains": "",
-    "excludeDomains": "",
+    "spanDomains": [],
+    "includeDomains": [],
+    "excludeDomains": [],
     "depth": 2,
     "exportOption": "",
     "debug": "",

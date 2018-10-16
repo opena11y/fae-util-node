@@ -1,10 +1,22 @@
 'use strict';
 
+const fs = require('fs');
+
+const args = process.argv;
+var configOptions;
+
+if (args[2] == '-c' && fs.existsSync('.' + args[3] + '.json')){
+  const filenameWithPath = '.' + args[3] + '.json';
+  configOptions = require(filenameWithPath);
+}
+else {
+  console.log('Please specify a valid config file.');
+  process.exit();
+}
+
 const puppeteer = require('puppeteer');
 const validUrl = require('valid-url');
-const fs = require('fs');
-// const url_parser = require('url-parse');
-const configOptions = require('./config.json');
+const parse = require('url-parse');
 
 class Url {
   constructor(url, depth, parentUrl) {
@@ -42,6 +54,46 @@ function directoryIsEmpty(directory) {
   return flag;
 }
 
+function getLinks(){
+  var documentLinksObject = document.links;
+  var links = Array();
+
+  for (var i = 0; i < documentLinksObject.length; i++){
+    links[i] = documentLinksObject[i].href;
+  }
+
+  return links;
+}
+
+function getActualURL(){
+  var temp = location.href;
+  if (temp.includes('#')){
+    temp = temp.substr(0,temp.indexOf('#'));
+  }
+  return temp;
+}
+
+function singleToDoubleQuotes(input){
+  return input.replace(/'/g, '"');
+}
+
+function filter(input){
+  if (configOptions.spanDomains == [] && configOptions.excludeDomains == [])
+    return true;
+
+  for (var i=0; i<configOptions.spanDomains; i++){
+    if (input.substr(-spanDomains[i].length) == spanDomains[i])
+      return true;
+  }
+
+  for (var i=0; i<configOptions.excludeDomains; i++){
+    if (input.substr(-excludeDomains[i].length) == excludeDomains[i])
+      return false;
+  }
+
+  return false;
+}
+
 function evaluateRules(passedRuleset) {
   console.log('Entered evaluateRules()');
   var doc = window.document;
@@ -57,17 +109,36 @@ function evaluateRules(passedRuleset) {
 }
 
 async function validateLink (url) {
+  
   var flag = false;
   var URL = url.url;
+  
+  var parsed = parse(URL);
+  console.log(parsed['host']);
+
+  if (filter(parsed['host'])){
+    fs.appendFile(configOptions.outputDirectory + '/filtered_urls.csv', [singleToDoubleQuotes(URL), url.parentUrl, '\n'], function (err) {
+      if (err) throw err;
+      console.log('Line 68');
+    });
+
+    fs.appendFile(configOptions.outputDirectory + '/filtered_urls.txt', [URL + '\n'], function (err) {
+      if (err) throw err;
+      console.log('Line 68');
+    });
+
+    return flag;
+  }
+
   if (validUrl.isUri(URL)){
     flag = true;
     for (var x = 0; x < configOptions.excluded_extensions.length && flag; x++){
       if (URL.substr(URL.length - 4) == '.' + configOptions.excluded_extensions[x]
-          || URL.substr(0, 7) == 'mailto:'){
+          || URL.substr(0, 7) == 'mailto:' || URL.substr(0, 4) != 'http'){
             flag = false;
             if (URL.substr(URL.length - 4) == '.' + configOptions.excluded_extensions[x])
             {
-              fs.appendFile(configOptions.outputDirectory + '/excluded_urls.csv', [URL, url.parentUrl, URL.substr(URL.length - 4), '\n'], function (err) {
+              fs.appendFile(configOptions.outputDirectory + '/excluded_urls.csv', [singleToDoubleQuotes(URL), url.parentUrl, URL.substr(URL.length - 4), '\n'], function (err) {
                 if (err) throw err;
                 console.log('Line 68');
               });
@@ -108,18 +179,18 @@ async function crawl(urlRoot, numUrlsEvaluated) {
         excluded.push(tempUrl.url);
         continue;
       }
+      
+      evaluationStatus = await evaluateSinglePage(tempUrl, currentQueue, index, numUrlsEvaluated, traversed);
 
-      evaluationStatus = await evaluateSinglePage(tempUrl, currentQueue, index, numUrlsEvaluated);
+      if (evaluationStatus[0]) {
+        traversed.push(evaluationStatus[1]);
 
-      if (evaluationStatus) {
-        traversed.push(tempUrl.url);
-
-        fs.appendFile(configOptions.outputDirectory + '/processed_urls.csv', [tempUrl.url, tempUrl.parentUrl, '\n'], function (err) {
+        fs.appendFile(configOptions.outputDirectory + '/processed_urls.csv', [singleToDoubleQuotes(evaluationStatus[1]), tempUrl.parentUrl, '\n'], function (err) {
           if (err) throw err;
           console.log('Line 118');
         });
 
-        fs.appendFile(configOptions.outputDirectory + '/processed_urls.txt', [tempUrl.url + '\n'], function (err) {
+        fs.appendFile(configOptions.outputDirectory + '/processed_urls.txt', [evaluationStatus[1] + '\n'], function (err) {
           if (err) throw err;
           console.log('Line 123');
         });
@@ -127,12 +198,12 @@ async function crawl(urlRoot, numUrlsEvaluated) {
       else {
         excluded.push(tempUrl.url);
 
-        fs.appendFile(configOptions.outputDirectory + '/unprocessed_urls.csv', [tempUrl.url, tempUrl.parentUrl, '\n'], function (err) {
+        fs.appendFile(configOptions.outputDirectory + '/unprocessed_urls.csv', [singleToDoubleQuotes(evaluationStatus[1]), tempUrl.parentUrl, '\n'], function (err) {
           if (err) throw err;
           console.log('Line 118');
         });
 
-        fs.appendFile(configOptions.outputDirectory + '/unprocessed_urls.txt', [tempUrl.url + '\n'], function (err) {
+        fs.appendFile(configOptions.outputDirectory + '/unprocessed_urls.txt', [evaluationStatus[1] + '\n'], function (err) {
           if (err) throw err;
           console.log('Line 123');
         });
@@ -152,7 +223,7 @@ async function crawl(urlRoot, numUrlsEvaluated) {
   console.log('Loop end: Excluded:', excluded);
 }
 
-async function evaluateSinglePage(url, currentQueue, index, numUrlsEvaluated) {
+async function evaluateSinglePage(url, currentQueue, index, numUrlsEvaluated, traversed) {
   try {
     console.log('Entered evaluateSinglePage()');
 
@@ -169,6 +240,15 @@ async function evaluateSinglePage(url, currentQueue, index, numUrlsEvaluated) {
     console.log(url.getUrl, ' successfully navigated to.');
     await page.waitFor(configOptions.delay * millisecondsToSeconds); //delay
 
+    var actualURL = await page.evaluate(getActualURL);
+    console.log('actualURL', actualURL);
+
+    if (actualURL in traversed){
+      console.log(actualURL, 'has already been processed.');
+      traversed.push(actualURL);
+      return [flag, actualURL];
+    }
+    
     // HTTP authentication
     if (configOptions.authentication) {
       const credentialsObject = { username: configOptions.username, password: configOptions.password };
@@ -197,7 +277,7 @@ async function evaluateSinglePage(url, currentQueue, index, numUrlsEvaluated) {
     }
 
     //Export results to file
-    fs.writeFile(configOptions.outputDirectory + "/results_" + numUrlsEvaluated.toString() + '_' + index.toString() + ".json", results, function (err) {
+    fs.writeFile(configOptions.outputDirectory + "/results_" + url.getDepth.toString() + '_' + index.toString() + ".json", results, function (err) {
       if (err) {
         return console.log(err);
       }
@@ -208,12 +288,13 @@ async function evaluateSinglePage(url, currentQueue, index, numUrlsEvaluated) {
     if (url.getDepth < configOptions.depth) {
       // get all links and push at the end of currentQueue
       console.log('In adding area: ');
-      const links = await page.evaluate(() => {
-        const anchors = document.querySelectorAll('a');
-        return [].map.call(anchors, a => a.href);
-      });
+      
+      var links = await page.evaluate(getLinks);
+
+      console.log('Links', links);
+      
       console.log('Passed links');
-      for (var i = 0, max = links.length; i < max; i++) {
+      for (var i = 0; i < links.length; i++) {
         newUrl = new Url(links[i], url.getDepth+1, url.getUrl);
         currentQueue.push(newUrl);
       }
@@ -226,15 +307,15 @@ async function evaluateSinglePage(url, currentQueue, index, numUrlsEvaluated) {
     console.log(error);
   }
 
-  return flag;
+  return [flag, actualURL];
 }
 
 (async () => {
 
   if (fs.existsSync(configOptions.outputDirectory)){
-    console.log('Directory exists.');
+    console.log('Specified directory', configOptions.outputDirectory, 'exists.');
     if (!directoryIsEmpty(configOptions.outputDirectory)){
-      console.log('Specified directory not empty. Exiting.');
+      console.log('Specified directory', configOptions.outputDirectory, 'not empty. Exiting.');
       process.exit();
     }
   }
