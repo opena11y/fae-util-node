@@ -1,5 +1,5 @@
 {
-    "urls": ["http://illinois.edu"],
+    "urls": ["http://www.wisc.edu"],
     "maxPages": 400,
     "wait": 0,
     "delay": 0,
@@ -12,10 +12,10 @@
         "password": ""
     },
     "path": "sell",
-    "spanDomains": ["illinois.edu"],
+    "spanDomains": ["wisc.edu"],
     "includeDomains": [],
     "excludeDomains": [],
-    "depth": 2,
+    "depth": 3,
     "exportOption": "",
     "debug": "",
     "excluded_extensions": ["doc", "docx", "gif", "jpeg", "jpg", "mov", "pdf", "ppt", "xml"],

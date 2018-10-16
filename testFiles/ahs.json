@@ -1,18 +1,18 @@
 {
-    "urls": ["http://illinois.edu"],
-    "maxPages": 400,
+    "urls": ["http://ahs.illinois.edu/"],
+    "maxPages": 15,
     "wait": 0,
     "delay": 0,
     "ruleset": "ARIA_STRICT",
-    "outputDirectory": "./wisc",
+    "outputDirectory": "./illinois-ahs",
     "version": "0.1",
     "authorization": false,
     "credentials": {
         "username": "",
         "password": ""
     },
-    "path": "sell",
-    "spanDomains": ["illinois.edu"],
+    "path": "",
+    "spanDomains": ["ahs.illinois.edu"],
     "includeDomains": [],
     "excludeDomains": [],
     "depth": 2,

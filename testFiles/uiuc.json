@@ -1,10 +1,10 @@
 {
     "urls": ["http://illinois.edu"],
-    "maxPages": 400,
+    "maxPages": 10,
     "wait": 0,
     "delay": 0,
     "ruleset": "ARIA_STRICT",
-    "outputDirectory": "./wisc",
+    "outputDirectory": "./illinois",
     "version": "0.1",
     "authorization": false,
     "credentials": {
