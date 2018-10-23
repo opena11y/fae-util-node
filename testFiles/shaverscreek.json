@@ -1,5 +1,5 @@
 {
-    "urls": ["http://www.shaverscreek.org/"],
+    "urls": ["https://www.shaverscreek.org/"],
     "maxPages": 500,
     "wait": 0,
     "delay": 0,

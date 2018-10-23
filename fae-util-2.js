@@ -5,12 +5,12 @@ const fs = require('fs');
 const args = process.argv;
 var configOptions;
 
-if (args[2] == '-c' && fs.existsSync('.' + args[3] + '.json')){
-  const filenameWithPath = '.' + args[3] + '.json';
+if (args[2] == '-c' && fs.existsSync(args[3] + '.json')){
+  const filenameWithPath = args[3] + '.json';
   configOptions = require(filenameWithPath);
 }
 else {
-  console.log('Please specify a valid config file.');
+  console.log('Specified file at ' + args[3] + '.json is not a valid config file.');
   process.exit();
 }
 
@@ -38,6 +38,30 @@ class Url {
   }
 }
 
+// Start of helper functions
+
+function trimUrl(passedUrl) {
+  var trimmedUrl = passedUrl;
+
+  if (trimmedUrl.includes('#')){
+    trimmedUrl = trimmedUrl.substr(0,trimmedUrl.indexOf('#'));
+  }
+
+  if (trimmedUrl.substr(-1,) == '/'){
+    trimmedUrl = trimmedUrl.substr(0,trimmedUrl.length-1);
+  }
+
+  if (trimmedUrl.substr(0,7) == 'http://') {
+    trimmedUrl = trimmedUrl.substr(7,);
+  }
+    
+  else if (trimmedUrl.substr(0,8) == 'https://') {
+    trimmedUrl = trimmedUrl.substr(8,);
+  }
+
+  return trimmedUrl;
+}
+
 function directoryIsEmpty(directory) {
   var flag = false;
   fs.readdir(directory, function(err, files) {
@@ -54,22 +78,33 @@ function directoryIsEmpty(directory) {
   return flag;
 }
 
-function getLinks(){
+async function getLinks(){
   var documentLinksObject = document.links;
   var links = Array();
 
   for (var i = 0; i < documentLinksObject.length; i++){
+    // links[i] = trimUrl(documentLinksObject[i].href);
     links[i] = documentLinksObject[i].href;
   }
 
   return links;
 }
 
-function getActualURL(){
+async function getActualURL(){
   var temp = location.href;
-  if (temp.includes('#')){
-    temp = temp.substr(0,temp.indexOf('#'));
-  }
+  console.log('Actual URL:', temp);
+  // if (temp.includes('#')){
+  //   temp = temp.substr(0,temp.indexOf('#'));
+  // }
+
+  // if (temp.substr(0,11) == 'http://www.') {
+  //     temp = temp.substr(11,);
+  //   }
+    
+  // else if (temp.substr(0,12) == 'https://www.') {
+  //   temp = temp.substr(12,);
+  // }
+
   return temp;
 }
 
@@ -94,7 +129,7 @@ function filter(input){
   return false;
 }
 
-function evaluateRules(passedRuleset) {
+async function evaluateRules(passedRuleset) {
   console.log('Entered evaluateRules()');
   var doc = window.document;
   var ruleset = OpenAjax.a11y.RulesetManager.getRuleset(passedRuleset);
@@ -130,11 +165,11 @@ async function validateLink (url) {
     return flag;
   }
 
-  if (validUrl.isUri(URL)){
+  if (true){
     flag = true;
     for (var x = 0; x < configOptions.excluded_extensions.length && flag; x++){
       if (URL.substr(URL.length - 4) == '.' + configOptions.excluded_extensions[x]
-          || URL.substr(0, 7) == 'mailto:' || URL.substr(0, 4) != 'http'){
+          || URL.substr(0, 7) == 'mailto:'){
             flag = false;
             if (URL.substr(URL.length - 4) == '.' + configOptions.excluded_extensions[x])
             {
@@ -154,12 +189,17 @@ async function validateLink (url) {
   return flag;
 }
 
+// End of helper functions
+
+var browser, page; // Global references to the browser and tab
+
 async function crawl(urlRoot, numUrlsEvaluated) {
   console.log('Entered crawl()\n');
   var numPagesEvaluated = 0, currentDepth = 0, index = 0;
   var traversed = Array();
   var excluded = Array();
   var tempUrl, evaluationStatus;
+  // var trimmedRoot = trimUrl(urlRoot);
 
   var urlRootObject = new Url(urlRoot, currentDepth, '');
   var currentQueue = [urlRootObject];
@@ -169,8 +209,13 @@ async function crawl(urlRoot, numUrlsEvaluated) {
     tempUrl = currentQueue.shift();
     console.log('Current Object:',tempUrl.getUrl,tempUrl.depth);
 
-    if (!(tempUrl.url in traversed)){
+    // console.log(traversed, 'right now.');
 
+    if (!(traversed.includes(tempUrl.getUrl))){
+
+      // console.log('182');
+      // console.log(!(tempUrl.getUrl in traversed));
+  
       if (await validateLink(tempUrl)){
         console.log(tempUrl.url + ' is a valid URL');
         // traversed.push(tempUrl);
@@ -187,12 +232,12 @@ async function crawl(urlRoot, numUrlsEvaluated) {
 
         fs.appendFile(configOptions.outputDirectory + '/processed_urls.csv', [singleToDoubleQuotes(evaluationStatus[1]), tempUrl.parentUrl, '\n'], function (err) {
           if (err) throw err;
-          console.log('Line 118');
+          // console.log('Line 118');
         });
 
         fs.appendFile(configOptions.outputDirectory + '/processed_urls.txt', [evaluationStatus[1] + '\n'], function (err) {
           if (err) throw err;
-          console.log('Line 123');
+          // console.log('Line 123');
         });
       }
       else {
@@ -200,12 +245,12 @@ async function crawl(urlRoot, numUrlsEvaluated) {
 
         fs.appendFile(configOptions.outputDirectory + '/unprocessed_urls.csv', [singleToDoubleQuotes(evaluationStatus[1]), tempUrl.parentUrl, '\n'], function (err) {
           if (err) throw err;
-          console.log('Line 118');
+          // console.log('Line 118');
         });
 
         fs.appendFile(configOptions.outputDirectory + '/unprocessed_urls.txt', [evaluationStatus[1] + '\n'], function (err) {
           if (err) throw err;
-          console.log('Line 123');
+          // console.log('Line 123');
         });
 
         continue;
@@ -215,7 +260,7 @@ async function crawl(urlRoot, numUrlsEvaluated) {
       numPagesEvaluated++;
     }
     else {
-      console.log(tempUrl, 'has already been traversed.');
+      console.log(tempUrl.getUrl, 'has already been traversed.');
     }
   }
 
@@ -226,21 +271,26 @@ async function crawl(urlRoot, numUrlsEvaluated) {
 async function evaluateSinglePage(url, currentQueue, index, numUrlsEvaluated, traversed) {
   try {
     console.log('Entered evaluateSinglePage()');
-
-    var browser = await puppeteer.launch({
-      args: ['--disable-web-security', '--no-sandbox', '--disable-setuid-sandbox']
-    });
-    var page = await browser.newPage();
+    
     var flag = false;
     var newUrl;
 
     const millisecondsToSeconds = 1000;
     // load page with/without delay and wait
-    await page.goto(url.getUrl, { timeout: configOptions.wait * millisecondsToSeconds, waitUntil: 'networkidle0' }); //wait
+    console.log('I am being told to open this:', url.getUrl);
+    console.log(await page.goto(url.getUrl, { timeout: configOptions.wait * millisecondsToSeconds, waitUntil: 'networkidle0' })); //wait
+    
     console.log(url.getUrl, ' successfully navigated to.');
     await page.waitFor(configOptions.delay * millisecondsToSeconds); //delay
 
-    var actualURL = await page.evaluate(getActualURL);
+    try {
+      var actualURL = await page.evaluate(await getActualURL);
+    } catch (error) {
+      console.log(error);
+      return [flag, undefined];
+    }
+
+    
     console.log('actualURL', actualURL);
 
     if (actualURL in traversed){
@@ -269,7 +319,7 @@ async function evaluateSinglePage(url, currentQueue, index, numUrlsEvaluated, tr
     await page.addScriptTag(rulesetsFileOptionsObject);
 
     //Run evaluation
-    var results = await page.evaluate(evaluateRules, configOptions.ruleset);
+    var results = await page.evaluate(await evaluateRules, configOptions.ruleset);
 
     if (results) {
       flag = true;
@@ -289,9 +339,9 @@ async function evaluateSinglePage(url, currentQueue, index, numUrlsEvaluated, tr
       // get all links and push at the end of currentQueue
       console.log('In adding area: ');
       
-      var links = await page.evaluate(getLinks);
+      var links = await page.evaluate(await getLinks);
 
-      console.log('Links', links);
+      // console.log('Links', links);
       
       console.log('Passed links');
       for (var i = 0; i < links.length; i++) {
@@ -300,9 +350,6 @@ async function evaluateSinglePage(url, currentQueue, index, numUrlsEvaluated, tr
       }
     }
 
-    //Close headless Chrome tab / page
-    await page.close();
-    await browser.close();
   } catch (error) {
     console.log(error);
   }
@@ -311,6 +358,24 @@ async function evaluateSinglePage(url, currentQueue, index, numUrlsEvaluated, tr
 }
 
 (async () => {
+
+  browser = await puppeteer.launch({
+    args: ['--disable-web-security', '--no-sandbox', '--disable-setuid-sandbox']
+  });
+
+  page = await browser.newPage();
+
+  page.on('requestfailed', request => {
+    console.log(request.url() + ' ' + request.failure().errorText);
+  });
+
+  // await page.setRequestInterception(true);
+  // page.on('request', request => {
+  // if (request.isNavigationRequest() && request.redirectChain().length > 1)
+  //   request.abort();
+  // else
+  //   request.continue();
+  // });
 
   if (fs.existsSync(configOptions.outputDirectory)){
     console.log('Specified directory', configOptions.outputDirectory, 'exists.');
@@ -330,6 +395,12 @@ async function evaluateSinglePage(url, currentQueue, index, numUrlsEvaluated, tr
     console.log("Run " + numUrlsEvaluated + ":");
     await crawl(configOptions.urls[numUrlsEvaluated], numUrlsEvaluated);
   }
+
+  //Close headless Chrome tab / page
+  await page.close();
+
+  //Close headless Chrome browser
+  await browser.close();
 
   process.exit(); //Quit entire node script
 })();
