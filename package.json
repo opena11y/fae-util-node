@@ -9,8 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "headless-chrome-crawler": "^1.8.0",
     "package.json": "^2.0.1",
-    "puppeteer": "^1.9.0",
     "url-parse": "^1.4.3",
     "valid-url": "^1.0.9"
   }

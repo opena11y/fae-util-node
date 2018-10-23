@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs');
+const HCCrawler = require('headless-chrome-crawler');
 
 const args = process.argv;
 var configOptions;
@@ -129,10 +130,12 @@ function filter(input){
   return false;
 }
 
-async function evaluateRules(passedRuleset) {
+
+
+async function evaluateRules() {
   console.log('Entered evaluateRules()');
   var doc = window.document;
-  var ruleset = OpenAjax.a11y.RulesetManager.getRuleset(passedRuleset);
+  var ruleset = OpenAjax.a11y.RulesetManager.getRuleset(configOptions.ruleset);
   var evaluator_factory = OpenAjax.a11y.EvaluatorFactory.newInstance();
   evaluator_factory.setParameter('ruleset', ruleset);
   evaluator_factory.setFeature('eventProcessing', 'fae-util');
@@ -359,48 +362,73 @@ async function evaluateSinglePage(url, currentQueue, index, numUrlsEvaluated, tr
 
 (async () => {
 
-  browser = await puppeteer.launch({
-    args: ['--disable-web-security', '--no-sandbox', '--disable-setuid-sandbox']
+  const evaluationFileOptions = { path: './oaa_a11y_evaluation.js' };
+  const ruleFileOptions = { path: './oaa_a11y_rules.js' };
+  const rulesetsFileOptions = { path: './oaa_a11y_rulesets.js' };
+
+  const evaluationFileOptionsObject = Object.create(evaluationFileOptions);
+  const ruleFileOptionsObject = Object.create(ruleFileOptions);
+  const rulesetsFileOptionsObject = Object.create(rulesetsFileOptions);
+
+  const crawler = await HCCrawler.launch({
+    args: ['--disable-web-security', '--no-sandbox', '--disable-setuid-sandbox'],
+    // Function to be evaluated in browser
+    // evaluatePage: (function(){
+    //   return 'abc';
+    // }),
+    evaluatePage: (function(){
+      page.addScriptTag(evaluationFileOptionsObject);
+      page.addScriptTag(ruleFileOptionsObject);
+      page.addScriptTag(rulesetsFileOptionsObject);
+
+      return evaluateRules();
+    }),
+    maxDepth: 2,
+    // Function to be called with evaluated results from browsers
+    onSuccess: (result => {
+      console.log(result.result);
+    }),
   });
 
-  page = await browser.newPage();
+  console.log('configOptions.urls', configOptions.urls);
+  await crawler.queue(configOptions.urls);
+  await crawler.onIdle(); // Resolved when no queue is left
+  await crawler.close(); // Close the crawler
 
-  page.on('requestfailed', request => {
-    console.log(request.url() + ' ' + request.failure().errorText);
-  });
-
-  // await page.setRequestInterception(true);
-  // page.on('request', request => {
-  // if (request.isNavigationRequest() && request.redirectChain().length > 1)
-  //   request.abort();
-  // else
-  //   request.continue();
+  // browser = await puppeteer.launch({
+  //   args: ['--disable-web-security', '--no-sandbox', '--disable-setuid-sandbox']
   // });
 
-  if (fs.existsSync(configOptions.outputDirectory)){
-    console.log('Specified directory', configOptions.outputDirectory, 'exists.');
-    if (!directoryIsEmpty(configOptions.outputDirectory)){
-      console.log('Specified directory', configOptions.outputDirectory, 'not empty. Exiting.');
-      process.exit();
-    }
-  }
-  else {
-    fs.mkdirSync(configOptions.outputDirectory);
-  }
+  // page = await browser.newPage();
 
-  var numUrlsEvaluated;
-  //number of URLs from configOptions.urls that have been worked on
+  // page.on('requestfailed', request => {
+  //   console.log(request.url() + ' ' + request.failure().errorText);
+  // });
 
-  for (numUrlsEvaluated = 0; numUrlsEvaluated < configOptions.urls.length; numUrlsEvaluated++) {
-    console.log("Run " + numUrlsEvaluated + ":");
-    await crawl(configOptions.urls[numUrlsEvaluated], numUrlsEvaluated);
-  }
+  // if (fs.existsSync(configOptions.outputDirectory)){
+  //   console.log('Specified directory', configOptions.outputDirectory, 'exists.');
+  //   if (!directoryIsEmpty(configOptions.outputDirectory)){
+  //     console.log('Specified directory', configOptions.outputDirectory, 'not empty. Exiting.');
+  //     process.exit();
+  //   }
+  // }
+  // else {
+  //   fs.mkdirSync(configOptions.outputDirectory);
+  // }
 
-  //Close headless Chrome tab / page
-  await page.close();
+  // var numUrlsEvaluated;
+  // //number of URLs from configOptions.urls that have been worked on
 
-  //Close headless Chrome browser
-  await browser.close();
+  // for (numUrlsEvaluated = 0; numUrlsEvaluated < configOptions.urls.length; numUrlsEvaluated++) {
+  //   console.log("Run " + numUrlsEvaluated + ":");
+  //   await crawl(configOptions.urls[numUrlsEvaluated], numUrlsEvaluated);
+  // }
+
+  // //Close headless Chrome tab / page
+  // await page.close();
+
+  // //Close headless Chrome browser
+  // await browser.close();
 
   process.exit(); //Quit entire node script
 })();
