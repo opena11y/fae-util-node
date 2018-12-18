@@ -9,6 +9,11 @@ Utility used by FAE technologies to spider and analyze web pages using OpenAjax 
 * The JavaScript files used for analysis must return text content (e.g. in some format like JSON or XML) for each URL and this content is saved to disk.
 * The utility also provides additional information URL, such as the request and returned URL, and URLS that were filtered or could not be processed for some reason (i.e. broken link, invalid script)
 
+## Installation
+
+Installing node
+using npm install
+
 ## fae-util Command Line Options 
 
 ### Specifying Configuration File 
