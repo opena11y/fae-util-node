@@ -67,7 +67,7 @@ A valid configuration file will have the following format
 
 An example configuration file can be found [here](https://github.com/opena11y/fae-util-2/blob/master/testFiles/shaverscreek.json).
 
-## OAA Configuration Script File
+## Running the Evaluation Library and getting Evaluation Results
 
 * This code is used to run the evaluation library and return evaluation results and is part of the source code of fae-util-2
 
