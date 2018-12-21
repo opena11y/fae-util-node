@@ -9,7 +9,7 @@ Utility used by FAE technologies to spider and analyze web pages using OpenAjax 
 * The JavaScript files used for analysis must return text content (e.g. in some format like JSON or XML) for each URL and this content is saved to disk.
 * The utility also provides additional information URL, such as the request and returned URL, and URLS that were filtered or could not be processed for some reason (i.e. broken link, invalid script)
 
-## Installation
+## Installation and Usage
 
 * This tool relies on Node.js for full functionality. Please ensure your installed version of Node matches the requirements specified [here](https://github.com/GoogleChrome/puppeteer#usage). The latest version of Node.js can be obtained from [here](https://nodejs.org).
 * Clone the repository.
@@ -65,7 +65,7 @@ A valid configuration file will have the following format
 
 ```
 
-An example configuration files can be found [here](https://github.com/opena11y/fae-util-2/blob/master/testFiles/shaverscreek.json).
+An example configuration file can be found [here](https://github.com/opena11y/fae-util-2/blob/master/testFiles/shaverscreek.json).
 
 ## OAA Configuration Script File
 
@@ -101,5 +101,3 @@ The script will output the following JSON files.
 * unprocessed_urls.txt: Simple list of unprocessed URLs
 
 Examples of these outputs can be found [here](https://github.com/opena11y/fae-util-2/wiki#example-configurations).
-
-## Testing fae-util-2
