@@ -66,7 +66,7 @@ A valid configuration file will have the following format
 
 ```
 
-An [example configuration file for Shaverscreek website](https://github.com/opena11y/fae-util-2/blob/master/testFiles/shaverscreek.json).
+An [example configuration file](https://github.com/opena11y/fae-util-2/blob/master/testFiles/shaverscreek.json) for Shaverscreek website.
 
 ## Running the Evaluation Library and getting Evaluation Results
 
