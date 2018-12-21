@@ -1,5 +1,5 @@
 # fae-util-2
-Utility used by FAE technologies to spider and analyze web pages using OpenAjax evaluation library loaded in Google Chromium browser.
+Utility used by FAE technologies to spider and analyze web pages using OpenAjax evaluation library in Google Chromium browser.
 
 ## Overview 
 
@@ -86,7 +86,7 @@ var out = evaluation.toJSON();
 out;
 ```
 
-## Oputput Files
+## Output Files
 
 The script will output the following JSON files.
 
