@@ -11,7 +11,7 @@ Utility used by FAE technologies to spider and analyze web pages using OpenAjax 
 
 ## Installation and Usage
 
-* Make sure you have a [recent verion of Node.js](https://nodejs.org) installed.
+* Make sure you have a recent version of [Node.js](https://nodejs.org) installed.
 * This tool relies on Node.js for full functionality. Please ensure your installed version of Node matches the requirements specified by [Puppeteer](https://github.com/GoogleChrome/puppeteer#usage).  
 * Clone the repository.
 * In the repository's directory, run ```npm install```. This will install the required Node.js packages for fae-util-2 to run.
