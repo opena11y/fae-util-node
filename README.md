@@ -14,7 +14,7 @@ Utility used by FAE technologies to spider and analyze web pages using OpenAjax 
 * This tool relies on Node.js for full functionality. Please ensure your installed version of Node matches the requirements specified [here](https://github.com/GoogleChrome/puppeteer/tree/v1.10.0#usage). The latest version of Node.js can be obtained from [here]( https://nodejs.org).
 * Clone the repository.
 * In the repository's directory, run ```npm install```. This will install the required Node.js packages for fae-util-2 to run.
-* Create a new configuration file or use one provided in the folder *testFiles*. More information about configuration files can be found [here](https://github.com/opena11y/fae-util-2#configuration-file-format-and-options).
+* Create a new configuration file or use one provided in the folder *testFiles*. More information about configuration files can be found [here](#configuration-file-format-and-options).
 * To run the script, run the following command in Command Prompt(on Windows) or Terminal(on Linux/Mac OS):
 ```node fae-util-2.js -c <configuration_file_name>```
 
