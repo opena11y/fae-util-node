@@ -66,7 +66,7 @@ A valid configuration file will have the following format
 
 ```
 
-An example configuration file can be found [here](https://github.com/opena11y/fae-util-2/blob/master/testFiles/shaverscreek.json).
+An [example configuration file for Shaverscreek website](https://github.com/opena11y/fae-util-2/blob/master/testFiles/shaverscreek.json).
 
 ## Running the Evaluation Library and getting Evaluation Results
 
@@ -100,4 +100,4 @@ The script will output the following JSON files.
 * unprocessed_urls.csv: Each entry contains "[url processed]","[url actual returned]","[url where resource found]", [status code], [processing time]
 * unprocessed_urls.txt: Simple list of unprocessed URLs
 
-Examples of these outputs can be found [here](https://github.com/opena11y/fae-util-2/wiki#example-configurations).
+[Example evaluation output](https://github.com/opena11y/fae-util-2/wiki#example-configurations).
