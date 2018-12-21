@@ -72,15 +72,17 @@ An example configuration file can be found [here](https://github.com/opena11y/fa
 * This code is used to run the evaluation library and return evaluation results and is part of the source code of fae-util-2
 
 ```
-var doc = window.document;
-
-var ruleset = OpenAjax.a11y.all_rulesets.getRuleset("<ruleset>"); 
-  
-var evaluation = ruleset.evaluate(doc.location.href, doc.title, doc, null, true);
-
-var out = evaluation.toJSON();
-
-out;
+async function evaluateRules(passedRuleset) {
+  var doc = window.document;
+  var ruleset = OpenAjax.a11y.RulesetManager.getRuleset(passedRuleset);
+  var evaluator_factory = OpenAjax.a11y.EvaluatorFactory.newInstance();
+  evaluator_factory.setParameter('ruleset', ruleset);
+  evaluator_factory.setFeature('eventProcessing', 'fae-util');
+  evaluator_factory.setFeature('groups', 7);
+  var evaluator = evaluator_factory.newEvaluator();
+  var evaluation = evaluator.evaluate(doc, doc.title, doc.location.href);
+  var out = evaluation.toJSON(true);
+  return out;
 ```
 
 ## Output Files
