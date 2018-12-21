@@ -10,7 +10,10 @@ if (args[2] == '-c' && fs.existsSync(args[3] + '.json')){
   configOptions = require(filenameWithPath);
 }
 else {
-  console.log('Specified file at ' + args[3] + '.json is not a valid config file.');
+  if (args[3] == undefined)
+    console.log('Please specify a configuration file.');
+  else
+    console.log('Specified file at ' + args[3] + '.json is not a valid config file.');
   process.exit();
 }
 
