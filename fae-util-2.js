@@ -21,6 +21,7 @@ const puppeteer = require('puppeteer');
 const validUrl = require('valid-url');
 const parse = require('url-parse');
 
+/* Data object to keep track of URLs being spidered */
 class Url {
   constructor(url, depth, parentUrl) {
     this.url = url;
@@ -43,6 +44,7 @@ class Url {
 
 // Start of helper functions
 
+/* Cleans up URLs before they are processed */
 function trimUrl(passedUrl) {
   var trimmedUrl = passedUrl;
 
@@ -65,6 +67,7 @@ function trimUrl(passedUrl) {
   return trimmedUrl;
 }
 
+/* checks to see if the output directory for evaluation results is empty */
 function directoryIsEmpty(directory) {
   var flag = false;
   fs.readdir(directory, function(err, files) {
@@ -81,6 +84,8 @@ function directoryIsEmpty(directory) {
   return flag;
 }
 
+/* DEPRICATED in favor of Document.links which filters URLs for HTML documents */
+/* gets links from the current page for spidering */
 async function getLinks(){
   var documentLinksObject = document.links;
   var links = Array();
@@ -93,6 +98,7 @@ async function getLinks(){
   return links;
 }
 
+/* DEPRICATED */
 async function getActualURL(){
   var temp = location.href;
   console.log('Actual URL:', temp);
@@ -115,6 +121,7 @@ function singleToDoubleQuotes(input){
   return input.replace(/'/g, '"');
 }
 
+/* Is used in controling what URLs get spidered */
 function filter(input){
   if (configOptions.spanDomains == [] && configOptions.excludeDomains == [])
     return true;
